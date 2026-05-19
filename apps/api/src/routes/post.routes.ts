@@ -1,0 +1,3 @@
+import { Router } from "express"; const ok = (_: any, res: any) => res.json({ ok: true });
+export const postRouter = Router();
+postRouter.get("/", ok);postRouter.post("/", ok);postRouter.get("/:id", ok);postRouter.patch("/:id", ok);postRouter.delete("/:id", ok);postRouter.post("/:id/like", ok);postRouter.delete("/:id/like", ok);postRouter.post("/:id/save", ok);postRouter.delete("/:id/save", ok);postRouter.post("/:id/pin", ok);postRouter.post("/:id/lock", ok);postRouter.get("/:id/comments", ok);postRouter.post("/:id/comments", ok);postRouter.patch("/:id/comments/:commentId", ok);postRouter.delete("/:id/comments/:commentId", ok);postRouter.post("/:id/comments/:commentId/like", ok);
