@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
+ codex/build-full-stack-web-application-nexspace-yzay3g
+
  codex/build-full-stack-web-application-nexspace-rma6dv
+ main
 set -Eeuo pipefail
 
 on_error() {
@@ -14,6 +17,11 @@ on_error() {
 }
 trap on_error ERR
 
+ codex/build-full-stack-web-application-nexspace-yzay3g
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT_DIR"
+
+
 set -euo pipefail
  main
 
@@ -21,6 +29,7 @@ ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT_DIR"
 
  codex/build-full-stack-web-application-nexspace-rma6dv
+ main
 API_URL="http://localhost:3001"
 WEB_URL="http://localhost:3000"
 API_DOCS_URL="${API_URL}/api/docs"
@@ -39,15 +48,21 @@ fi
 if ! docker info >/dev/null 2>&1; then
   echo "❌ Docker daemon is not running. Start Docker Desktop/Engine first."
   exit 1
+ codex/build-full-stack-web-application-nexspace-yzay3g
+
 
 if ! command -v pnpm >/dev/null 2>&1; then
   npm i -g pnpm@9
+ main
  main
 fi
 
 [ -f .env ] || cp .env.example .env
 
+ codex/build-full-stack-web-application-nexspace-yzay3g
+
  codex/build-full-stack-web-application-nexspace-rma6dv
+ main
 echo "📦 Installing dependencies..."
 pnpm install
 
@@ -55,15 +70,21 @@ echo "🐳 Starting development infrastructure..."
 docker compose -f docker-compose.dev.yml up -d
 
 echo "🗄️ Preparing database..."
+ codex/build-full-stack-web-application-nexspace-yzay3g
+
 
 pnpm install
 docker compose -f docker-compose.dev.yml up -d
+ main
  main
 pnpm --filter api prisma:generate
 pnpm --filter api db:push
 pnpm --filter api db:seed
 
+ codex/build-full-stack-web-application-nexspace-yzay3g
+
  codex/build-full-stack-web-application-nexspace-rma6dv
+ main
 mkdir -p .logs
 
 pkill -f "next dev" >/dev/null 2>&1 || true
@@ -109,6 +130,9 @@ echo "- docker compose -f docker-compose.dev.yml down"
 if [[ -t 1 ]]; then
   read -r -p "Press Enter to close..." _
 fi
+ codex/build-full-stack-web-application-nexspace-yzay3g
+
 
 pnpm dev
+ main
  main
