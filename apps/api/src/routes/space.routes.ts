@@ -1,0 +1,4 @@
+import { Router } from "express";
+const ok = (_: any, res: any) => res.json({ ok: true });
+export const spaceRouter = Router();
+spaceRouter.get("/", ok);spaceRouter.post("/", ok);spaceRouter.get("/trending", ok);spaceRouter.get("/categories", ok);spaceRouter.get("/:slug", ok);spaceRouter.patch("/:slug", ok);spaceRouter.delete("/:slug", ok);spaceRouter.post("/:slug/join", ok);spaceRouter.delete("/:slug/leave", ok);spaceRouter.get("/:slug/members", ok);spaceRouter.patch("/:slug/members/:userId", ok);spaceRouter.delete("/:slug/members/:userId", ok);spaceRouter.get("/:slug/channels", ok);spaceRouter.post("/:slug/channels", ok);spaceRouter.delete("/:slug/channels/:id", ok);spaceRouter.get("/:slug/events", ok);spaceRouter.post("/:slug/events", ok);spaceRouter.get("/:slug/wiki", ok);spaceRouter.get("/:slug/wiki/:pageSlug", ok);spaceRouter.post("/:slug/wiki", ok);spaceRouter.put("/:slug/wiki/:pageSlug", ok);spaceRouter.get("/:slug/analytics", ok);

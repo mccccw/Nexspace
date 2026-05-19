@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role { USER MODERATOR ADMIN }
+enum SpaceVisibility { PUBLIC PRIVATE INVITE_ONLY }
+enum PostType { TEXT IMAGE LINK CODE POLL }
+enum FileType { IMAGE VIDEO DOCUMENT ARCHIVE OTHER }
+enum NotificationType { FOLLOW MENTION POST_LIKE POST_COMMENT SPACE_INVITE ACHIEVEMENT MESSAGE SYSTEM }
+
+model User {
+  id               String   @id @default(cuid())
+  username         String   @unique
+  email            String   @unique
+  passwordHash     String?
+  displayName      String?
+  bio              String?
+  role             Role     @default(USER)
+  xp               Int      @default(0)
+  level            Int      @default(1)
+  reputation       Int      @default(0)
+  lastSeenAt       DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  posts            Post[]
+  comments         Comment[]
+  ownedSpaces      Space[] @relation("SpaceOwner")
+  spaceMemberships SpaceMember[]
+  notifications    Notification[]
+  sessions         Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Space {
+  id          String          @id @default(cuid())
+  slug        String          @unique
+  name        String
+  description String?
+  category    String
+  tags        String[]
+  visibility  SpaceVisibility @default(PUBLIC)
+  ownerId     String
+  postCount   Int             @default(0)
+  memberCount Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  owner    User @relation("SpaceOwner", fields: [ownerId], references: [id])
+  members  SpaceMember[]
+  posts    Post[]
+  channels ChatChannel[]
+}
+
+model SpaceMember {
+  id       String   @id @default(cuid())
+  spaceId  String
+  userId   String
+  role     String   @default("MEMBER")
+  joinedAt DateTime @default(now())
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([spaceId, userId])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  spaceId   String
+  authorId  String
+  title     String
+  content   String
+  type      PostType @default(TEXT)
+  tags      String[]
+  likeCount Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  space  Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  author User  @relation(fields: [authorId], references: [id])
+  comments Comment[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
+}
+
+model ChatChannel {
+  id        String   @id @default(cuid())
+  spaceId   String
+  name      String
+  createdAt DateTime @default(now())
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  channelId String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  channel ChatChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+}
+
+model File {
+  id           String   @id @default(cuid())
+  userId        String
+  name          String
+  originalName  String
+  mimeType      String
+  size          Int
+  url           String
+  type          FileType
+  createdAt     DateTime @default(now())
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
