@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+ codex/build-full-stack-web-application-nexspace-rma6dv
 set -Eeuo pipefail
 
 on_error() {
@@ -13,9 +14,13 @@ on_error() {
 }
 trap on_error ERR
 
+set -euo pipefail
+ main
+
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT_DIR"
 
+ codex/build-full-stack-web-application-nexspace-rma6dv
 API_URL="http://localhost:3001"
 WEB_URL="http://localhost:3000"
 API_DOCS_URL="${API_URL}/api/docs"
@@ -34,10 +39,15 @@ fi
 if ! docker info >/dev/null 2>&1; then
   echo "❌ Docker daemon is not running. Start Docker Desktop/Engine first."
   exit 1
+
+if ! command -v pnpm >/dev/null 2>&1; then
+  npm i -g pnpm@9
+ main
 fi
 
 [ -f .env ] || cp .env.example .env
 
+ codex/build-full-stack-web-application-nexspace-rma6dv
 echo "📦 Installing dependencies..."
 pnpm install
 
@@ -45,10 +55,15 @@ echo "🐳 Starting development infrastructure..."
 docker compose -f docker-compose.dev.yml up -d
 
 echo "🗄️ Preparing database..."
+
+pnpm install
+docker compose -f docker-compose.dev.yml up -d
+ main
 pnpm --filter api prisma:generate
 pnpm --filter api db:push
 pnpm --filter api db:seed
 
+ codex/build-full-stack-web-application-nexspace-rma6dv
 mkdir -p .logs
 
 pkill -f "next dev" >/dev/null 2>&1 || true
@@ -94,3 +109,6 @@ echo "- docker compose -f docker-compose.dev.yml down"
 if [[ -t 1 ]]; then
   read -r -p "Press Enter to close..." _
 fi
+
+pnpm dev
+ main
